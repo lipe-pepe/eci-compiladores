@@ -5,6 +5,9 @@ DIGITO  [0-9]
 LETRA   [a-zA-Z]
 
 ID      (\$?({LETRA}|_)[{LETRA}{DIGITO}_]*)
+INT     ({DIGITO}+)
+FLOAT   ({DIGITO}+"."{DIGITO}+([eE][+-]?{DIGITO}+)?)
+STRING  (\"([^\"\n\\]|\\.)*\"|\'([^\'\n\\]|\\.)*\')
 
 
 %%
@@ -12,11 +15,18 @@ ID      (\$?({LETRA}|_)[{LETRA}{DIGITO}_]*)
 
 {WS}	{ /* ignora espaços, tabs e '\n' */ } 
 
+">="    { lexema = yytext; return _MAIG; }
+"<="    { lexema = yytext; return _MEIG; }
+"=="    { lexema = yytext; return _IG; }
+"!="    { lexema = yytext; return _DIF; }
+
 "for"   { lexema = yytext; return _FOR; }
 "if"    { lexema = yytext; return _IF; }
 
-
 {ID}    { lexema = yytext; return _ID;}
+{INT}   { lexema = yytext; return _INT; }
+{FLOAT} { lexema = yytext; return _FLOAT; }
+{STRING} { lexema = yytext; return _STRING; }
 
 .       { return *yytext; 
           /* Essa deve ser a última regra. Dessa forma qualquer caractere isolado será retornado pelo seu código ascii. */ }
