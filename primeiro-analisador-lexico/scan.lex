@@ -1,3 +1,7 @@
+%{
+string lexema;
+%}
+
 /* Coloque aqui definições regulares */
 
 WS	    [ \t\n]
