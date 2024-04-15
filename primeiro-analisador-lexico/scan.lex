@@ -8,10 +8,10 @@ WS	    [ \t\n]
 DIGITO  [0-9]
 LETRA   [a-zA-Z]
 
-ID      (\$?({LETRA}|_)[{LETRA}{DIGITO}_]*)
+ID      (\$?({LETRA}|_)[a-zA-Z0-9_]*)
 INT     ({DIGITO}+)
-FLOAT   ({DIGITO}+"."{DIGITO}+([eE][+-]?{DIGITO}+)?)
-STRING  (\"([^\"\n\\]|\\.)*\"|\'([^\'\n\\]|\\.)*\')
+FLOAT   ({DIGITO}+"."?{DIGITO}+([eE][+-]?{DIGITO}+)?)
+STRING  (\"[^\"\n]*\"|\'[^\'\n]*\') 
 
 
 %%
@@ -32,7 +32,7 @@ STRING  (\"([^\"\n\\]|\\.)*\"|\'([^\'\n\\]|\\.)*\')
 {FLOAT} { lexema = yytext; return _FLOAT; }
 {STRING} { lexema = yytext; return _STRING; }
 
-.       { return *yytext; 
+.       { lexema = yytext; return *yytext; 
           /* Essa deve ser a última regra. Dessa forma qualquer caractere isolado será retornado pelo seu código ascii. */ }
 
 %%

@@ -3,8 +3,6 @@
 
 using namespace std;
 
-string lexema;
-
 enum TOKEN { _ID = 256, _FOR, _IF, _INT, _FLOAT, _MAIG, _MEIG, _IG, _DIF, _STRING, _STRING2, _COMENTARIO };
 
 extern "C" int yylex();  
