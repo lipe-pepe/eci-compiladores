@@ -13,6 +13,7 @@ INT     ({DIGITO}+)
 FLOAT   ({DIGITO}?+"."?{DIGITO}+([eE][+-]?{DIGITO}+)?)
 STRING  (\"[^\"\n]*\"|\'[^\'\n]*\') 
 STRING2 (\`[^\`]*\`)
+COMENT  (\/\/[^\n]*|\/\*.*\*\/)
 
 
 %%
@@ -32,6 +33,7 @@ STRING2 (\`[^\`]*\`)
 "$"         { lexema = yytext; return _ID; }
 {INT}       { lexema = yytext; return _INT; }
 {FLOAT}     { lexema = yytext; return _FLOAT; }
+{COMENT}    { lexema = yytext; return _COMENTARIO; }
 {STRING}    {  lexema = yytext;
             lexema.erase(0, 1);
             lexema.erase(lexema.length() - 1);
