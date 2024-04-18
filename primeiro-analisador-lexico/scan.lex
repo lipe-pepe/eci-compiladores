@@ -1,6 +1,6 @@
 %{
 #include <iostream>
-
+#include <string>
 string lexema;
 %}
 
@@ -16,7 +16,8 @@ ID_INV  (\$?({LETRA}|{DIGITO}|_|$)[a-zA-Z0-9_]*\$)
 ID      (\$?({LETRA}|_)[a-zA-Z0-9_]*)
 INT     ({DIGITO}+)
 FLOAT   ({DIGITO}?+"."?{DIGITO}+([eE][+-]?{DIGITO}+)?)
-STRING  (\"[^\"\n]*\"|\'[^\'\n]*\') 
+STRING_A  (\"[^\"\n]*(\\.|"")*[^\"\\]*\") 
+STRING_B  (\'[^\'\n]*(\\.|'')*[^\'\\]*\')
 STRING2 (\`[^\`]*\`)
 COMENT  (\/\/[^\n]*|\/\*.*\*\/)
 
@@ -40,10 +41,44 @@ COMENT  (\/\/[^\n]*|\/\*.*\*\/)
 {INT}       { lexema = yytext; return _INT; }
 {FLOAT}     { lexema = yytext; return _FLOAT; }
 {COMENT}    { lexema = yytext; return _COMENTARIO; }
-{STRING}    {  
+{STRING_A}  {  
                 lexema = yytext;
                 lexema.erase(0, 1);
                 lexema.erase(lexema.length() - 1);
+
+                // Procura por caracteres de escape e remove
+                size_t achado = lexema.find("\\");
+                while (achado != std::string::npos) {
+                    lexema.erase(achado, 1); // Remove 1 caractere na posição achado
+                    achado = lexema.find("\\", achado); // Procura pelo proximo caracter de escape
+                }
+
+                // Procura por caracteres de "" e remove
+                size_t achado2 = lexema.find("\"\"");
+                while (achado2 != std::string::npos) {
+                    lexema.erase(achado2, 1); // Remove a primeira aspa
+                    achado2 = lexema.find("\"\"", achado2 + 1); // Procura pela próxima sequência de duas aspas
+                }
+                return _STRING; 
+            }
+{STRING_B}  {  
+                lexema = yytext;
+                lexema.erase(0, 1);
+                lexema.erase(lexema.length() - 1);
+
+                // Procura por caracteres de escape e remove
+                size_t achado = lexema.find("\\");
+                while (achado != std::string::npos) {
+                    lexema.erase(achado, 1); // Remove 1 caractere na posição achado
+                    achado = lexema.find("\\", achado); // Procura pelo proximo caracter de escape
+                }
+
+                // Procura por caracteres de '' e remove
+                size_t achado2 = lexema.find("\'\'");
+                while (achado2 != std::string::npos) {
+                    lexema.erase(achado2, 1); // Remove a primeira aspa
+                    achado2 = lexema.find("\'\'", achado2 + 1); // Procura pela próxima sequência de duas aspas
+                }
                 return _STRING; 
             }
 {STRING2}   { 
