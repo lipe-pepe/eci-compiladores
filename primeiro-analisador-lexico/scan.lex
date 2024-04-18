@@ -47,10 +47,10 @@ COMENT  (\/\/[^\n]*|\/\*.*\*\/)
                 lexema.erase(lexema.length() - 1);
 
                 // Procura por caracteres de escape e remove
-                size_t achado = lexema.find("\\");
+                size_t achado = lexema.find("\\\"");
                 while (achado != std::string::npos) {
                     lexema.erase(achado, 1); // Remove 1 caractere na posição achado
-                    achado = lexema.find("\\", achado); // Procura pelo proximo caracter de escape
+                    achado = lexema.find("\\\"", achado); // Procura pelo proximo caracter de escape
                 }
 
                 // Procura por caracteres de "" e remove
@@ -67,10 +67,10 @@ COMENT  (\/\/[^\n]*|\/\*.*\*\/)
                 lexema.erase(lexema.length() - 1);
 
                 // Procura por caracteres de escape e remove
-                size_t achado = lexema.find("\\");
+                size_t achado = lexema.find("\\\'");
                 while (achado != std::string::npos) {
                     lexema.erase(achado, 1); // Remove 1 caractere na posição achado
-                    achado = lexema.find("\\", achado); // Procura pelo proximo caracter de escape
+                    achado = lexema.find("\\\'", achado); // Procura pelo proximo caracter de escape
                 }
 
                 // Procura por caracteres de '' e remove
