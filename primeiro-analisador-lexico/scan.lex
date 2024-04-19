@@ -22,7 +22,8 @@ STRING_B  (\'[^\'\n]*(\\.|'')*[^\'\\]*\')
 STRING2_A   (\`[^{]*\$)
 EXPR        (\{[^}]*[a-zA-Z0-9_]*[^}])
 STRING2_B   (\}.*\`)
-/*STRING2 (\`[^\`]*\`)*/
+STRING2 (\`[^\`{}]*\`)
+
 COMENT  (\/\*[^*]*\*+([^/*][^*]*\*+)*\/|\/\/[^\n]*)
 
 
@@ -51,6 +52,12 @@ COMENT  (\/\*[^*]*\*+([^/*][^*]*\*+)*\/|\/\/[^\n]*)
                 return _STRING2; 
             }
 {STRING2_B} { 
+                lexema = yytext;
+                lexema.erase(0, 1);
+                lexema.erase(lexema.length() - 1);
+                return _STRING2; 
+            }
+{STRING2}   { 
                 lexema = yytext;
                 lexema.erase(0, 1);
                 lexema.erase(lexema.length() - 1);
