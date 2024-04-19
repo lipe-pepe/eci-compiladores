@@ -18,7 +18,11 @@ INT     ({DIGITO}+)
 FLOAT   ({DIGITO}?+"."?{DIGITO}+([eE][+-]?{DIGITO}+)?)
 STRING_A  (\"[^\"\n]*(\\.|"")*[^\"\\]*\") 
 STRING_B  (\'[^\'\n]*(\\.|'')*[^\'\\]*\')
-STRING2 (\`[^\`]*\`)
+
+STRING2_A   (\`[^{]*\$)
+EXPR        (\{[^}]*[a-zA-Z0-9_]*[^}])
+STRING2_B   (\}.*\`)
+/*STRING2 (\`[^\`]*\`)*/
 COMENT  (\/\*[^*]*\*+([^/*][^*]*\*+)*\/|\/\/[^\n]*)
 
 
@@ -34,6 +38,24 @@ COMENT  (\/\*[^*]*\*+([^/*][^*]*\*+)*\/|\/\/[^\n]*)
 
 "for"   { lexema = yytext; return _FOR; }
 "if"    { lexema = yytext; return _IF; }
+
+{EXPR}      { 
+                lexema = yytext; 
+                lexema.erase(0, 1);
+                return _EXPR; 
+            }
+{STRING2_A} { 
+                lexema = yytext;
+                lexema.erase(0, 1);
+                lexema.erase(lexema.length() - 1);
+                return _STRING2; 
+            }
+{STRING2_B} { 
+                lexema = yytext;
+                lexema.erase(0, 1);
+                lexema.erase(lexema.length() - 1);
+                return _STRING2; 
+            }
 
 {ID_INV}    { cout << "Erro: Identificador invalido: " << yytext << "\n"; }  
 {ID}        { lexema = yytext; return _ID;}
@@ -80,12 +102,6 @@ COMENT  (\/\*[^*]*\*+([^/*][^*]*\*+)*\/|\/\/[^\n]*)
                     achado2 = lexema.find("\'\'", achado2 + 1); // Procura pela próxima sequência de duas aspas
                 }
                 return _STRING; 
-            }
-{STRING2}   { 
-                lexema = yytext;
-                lexema.erase(0, 1);
-                lexema.erase(lexema.length() - 1);
-                return _STRING2; 
             }
 
 .       { lexema = yytext; return *yytext; 
