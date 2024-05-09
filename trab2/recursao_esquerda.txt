@@ -1,0 +1,66 @@
+*** Recursividade à esquerda ***
+
+A gramática original fornecida pelo professor é recursiva à esquerda. Na primeira e na segunda produção 
+de E, por exemplo, o não terminal E ocorre diretamente à esquerda dele mesmo. Isso significa que a 
+variável E é recursiva à esquerda. Isso geralmente pode causar problemas para alguns algoritmos de 
+análise sintática, como o analisador sintático descendente recursivo, que pode entrar em loops infinitos 
+ao tentar expandir recursivamente a produção. Para evitar esse problema, geralmente é preferível eliminar 
+a recursão à esquerda na gramática. A gramática produzida com recursão à esquerda é a seguinte:
+
+OPE -> (PRINT|ATR)
+ATR -> id { Print( lexema ); } = E { Print( "="); }
+PRINT -> print ( E ) { Print( "print"); }
+E -> E + T { Print( "+"); }
+   | E - T { Print( "-"); }
+   | T
+T -> T * F { Print( "*"); }
+   | T / F { Print( "/"); }
+   | F
+F -> id ( F, G ) { Print( lexema); }  
+   | G
+G -> id { Print(lexema + "@"); }
+   | num { Print( lexema ); }
+   | ( E )
+
+Resolvendo:
+
+1. Identificar a recursão à esquerda na produção:
+   Na gramática acima, identificamos a recursão à esquerda na produção de E, onde E aparece diretamente
+   à esquerda dele mesmo nas produções E -> E + T e E -> E - T.
+
+2. Dividir a produção:
+   Para eliminar a recursão à esquerda, dividimos a produção E em duas partes: uma parte que não causa 
+   recursão à esquerda (denominada β) e uma parte que causa recursão à esquerda (denominada α).
+   β: Parte após a recursão à esquerda (T neste caso).
+   α: Parte que inclui a recursão à esquerda (+ T { Print( "+"); } e - T { Print( "-"); } neste caso).
+
+3. Criar novas produções:
+   Criamos uma nova produção (E') para lidar com a recursão à esquerda. E' representa o restante da 
+   produção após a parte não recursiva.
+   E -> T E': A produção original é modificada para conter apenas a parte não recursiva.
+   E' -> + T { Print( "+"); } E' | - T { Print( "-"); } E' | ε: Aqui, E' lida com a recursão à esquerda. 
+   Ela pode ser uma sequência de operadores seguida por T e E', ou pode ser vazia (ε) para indicar o 
+   fim da recursão.
+
+4. Repetir o processo para outras produções:
+   Se houver outras produções com recursão à esquerda na gramática, o mesmo processo deve ser aplicado 
+   a elas.
+
+Após a eliminição da recursão à esquerda, a gramática resultante é a seguinte:
+
+OPE -> (PRINT|ATR)
+ATR -> id { Print( lexema ); } = E { Print( "="); }
+PRINT -> print ( E ) { Print( "print"); }
+E -> T E'
+E' -> + T { Print( "+"); } E'
+   | - T { Print( "-"); } E'
+   | ε
+T -> F T'
+T' -> * F { Print( "*"); } T'
+   | / F { Print( "/"); } T'
+   | ε
+F -> id ( F, G ) { Print( lexema ); }  
+   | G
+G -> id { Print(lexema + "@"); }
+   | num { Print( lexema ); }
+   | ( E )

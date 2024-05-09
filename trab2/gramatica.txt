@@ -36,3 +36,26 @@ Essa gramática funciona da seguinte forma:
   multiplicação ou a divisão e indica que um termo (T) pode ser seguido de um sinal de 
   multiplicação (*) e outro fator (F). O termo também pode ser seguido de um sinal de divisão 
   (/) e outro fator (F). A ação semântica é imprimir o sinal de multiplicação ou divisão.
+
+4. Esta regra define os fatores na expressão. Um fator (F) pode ser um identificador (id), um número 
+  (num) ou uma expressão (E) entre parênteses. A ação semântica associada à produção do identificador 
+  é imprimir o lexema seguido do símbolo "@", enquanto para o número é apenas imprimir o lexema.
+
+A primeira parte do trabalho consiste em modificar essa gramática para incluir funções, print e mais
+de uma expressão separadas por ;. A gramática modificada é a seguinte:
+
+OPE -> (PRINT|ATR)
+ATR -> id { Print( lexema ); } = E { Print( "="); }
+PRINT -> print ( E ) { Print( "print"); }
+E -> E + T { Print( "+"); }
+   | E - T { Print( "-"); }
+   | T
+T -> T * F { Print( "*"); }
+   | T / F { Print( "/"); }
+   | F
+F -> id ( F, G ) { Print( lexema); }  
+   | G
+G -> id { Print(lexema + "@"); }
+   | num { Print( lexema ); }
+   | ( E )
+
