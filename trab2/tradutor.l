@@ -135,7 +135,7 @@ void A() {
 void PRT() {
   casa( PRINT );
   E();
-  print( "print" );
+  print( "print #" );
 }
 
 void E() {
@@ -188,6 +188,18 @@ void F() {
       casa( ID ); 
       print( temp ); }
       break;
+    case '-':
+      print( "0" );
+      casa( '-' );
+      F();
+      print( "-" );
+      break;
+    case '+' :
+      casa( '+' );
+      F();
+      break;
+    default:
+      G();
   }
 }
 

@@ -9,14 +9,16 @@ a recursão à esquerda na gramática. A gramática produzida com recursão à e
 
 OPE -> (PRINT|ATR)
 ATR -> id { Print( lexema ); } = E { Print( "="); }
-PRINT -> print ( E ) { Print( "print"); }
+PRINT -> print E { Print( "print #"); }
 E -> E + T { Print( "+"); }
    | E - T { Print( "-"); }
    | T
 T -> T * F { Print( "*"); }
    | T / F { Print( "/"); }
    | F
-F -> id ( F, G ) { Print( lexema); }  
+F -> id ( F, G ) { Print( lexema); }
+   | { Print ("0"); } - F { Print( "-"); }
+   | + G { Print( "+"); }  
    | G
 G -> id { Print(lexema + "@"); }
    | num { Print( lexema ); }
@@ -50,7 +52,7 @@ Após a eliminição da recursão à esquerda, a gramática resultante é a segu
 
 OPE -> (PRINT|ATR)
 ATR -> id { Print( lexema ); } = E { Print( "="); }
-PRINT -> print ( E ) { Print( "print"); }
+PRINT -> print E { Print( "print #"); }
 E -> T E'
 E' -> + T { Print( "+"); } E'
    | - T { Print( "-"); } E'
@@ -59,7 +61,9 @@ T -> F T'
 T' -> * F { Print( "*"); } T'
    | / F { Print( "/"); } T'
    | ε
-F -> id ( F, G ) { Print( lexema ); }  
+F -> id ( F, G ) { Print( lexema ); } 
+   | { Print ("0"); } - F { Print( "-"); }
+   | + G { Print( "+"); }  
    | G
 G -> id { Print(lexema + "@"); }
    | num { Print( lexema ); }
