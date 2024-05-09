@@ -16,8 +16,7 @@ E -> E + T { Print( "+"); }
 T -> T * F { Print( "*"); }
    | T / F { Print( "/"); }
    | F
-F -> id ( F, G ) { Print( lexema); }
-   | { Print ("0"); } - F { Print( "-"); }
+F -> { Print ("0"); } - F { Print( "-"); }
    | + G { Print( "+"); }  
    | G
 G -> id { Print(lexema + "@"); }
@@ -61,8 +60,7 @@ T -> F T'
 T' -> * F { Print( "*"); } T'
    | / F { Print( "/"); } T'
    | ε
-F -> id ( F, G ) { Print( lexema ); } 
-   | { Print ("0"); } - F { Print( "-"); }
+F -> { Print ("0"); } - F { Print( "-"); }
    | + G { Print( "+"); }  
    | G
 G -> id { Print(lexema + "@"); }

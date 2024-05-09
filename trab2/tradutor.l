@@ -118,10 +118,14 @@ void OPE() {
     case PRINT: 
       PRT();
       casa( ';' );
+      OPE();
       break;
-    default:
+    case ID:
+    case CSTR:
+    case CDOUBLE:
       ATR();
       casa( ';' );
+      OPE();
       break; 
   }
 }
@@ -133,7 +137,7 @@ void ATR() {
   print( temp );
   casa( '=' );
   E();
-  print( "=" );
+  print( "= ^" );
 }
 
 void PRT() {
@@ -187,11 +191,6 @@ void T_linha() {
 
 void F() {
   switch( token ) {
-    case ID: {
-      string temp = lexema;
-      casa( ID ); 
-      print( temp ); }
-      break;
     case '-':
       print( "0" );
       casa( '-' );
@@ -212,7 +211,7 @@ void G() {
     case ID : {
       string temp = lexema;
       casa( ID ); 
-      print( temp + "@" ); } 
+      print( temp + " @" ); } 
       break;
     case CSTR : {
       string temp = lexema;
