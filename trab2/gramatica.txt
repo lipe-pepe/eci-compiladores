@@ -1,0 +1,38 @@
+*** Gramática Livre de Contexto ***
+
+Uma gramática livre de contexto é uma forma de representar a estrutura sintática de uma 
+linguagem formal. Ela é "livre de contexto" no sentido de que as regras de produção definidas 
+na gramática não dependem do contexto em que são aplicadas. Isso significa que a substituição 
+de um símbolo não terminal por seus símbolos terminais pode ser feita independentemente do 
+contexto em que ocorre.
+
+Temos a gramática fornecida pelo professor:
+
+A -> id { Print( lexema ); } = E { Print( "="); }
+E -> E + T { Print( "+"); }
+   | E - T { Print( "-"); }
+   | T
+T -> T * F { Print( "*"); }
+   | T / F { Print( "/"); }
+   | F
+F -> id { Print(lexema + "@"); }
+   | num { Print( lexema ); }
+   | ( E )
+
+Essa gramática funciona da seguinte forma:
+
+1. A regra de produção A -> id { Print( lexema ); } = E { Print( "="); } é a regra inicial. 
+  Ela indica que uma expressão começa com um identificador (id), seguido de um sinal de igual 
+  (=) e uma expressão (E). O que está entre chaves é a ação semântica que deve ser executada
+  quando a regra é aplicada. No caso, a ação é imprimir o lexema do identificador e o sinal de
+  igual.
+
+2. A regra de produção E -> E + T { Print( "+"); } | E - T { Print( "-"); } | T define a adição 
+  ou a subtração e indica que uma expressão (E) pode ser seguida de um sinal de adição (+) e 
+  outra expressão (T). A expressão também pode ser seguida de um sinal de subtração (-) e outra 
+  expressão (T). A ação semântica é imprimir o sinal de adição ou subtração.
+
+3. A regra de produção T -> T * F { Print( "*"); } | T / F { Print( "/"); } | F define a 
+  multiplicação ou a divisão e indica que um termo (T) pode ser seguido de um sinal de 
+  multiplicação (*) e outro fator (F). O termo também pode ser seguido de um sinal de divisão 
+  (/) e outro fator (F). A ação semântica é imprimir o sinal de multiplicação ou divisão.
