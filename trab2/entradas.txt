@@ -1,0 +1,4 @@
+print """hello, " + "world" + "!\"";
+a = "hello, ";
+b = a + "world" + "!";
+print b;

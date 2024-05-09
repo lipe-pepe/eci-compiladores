@@ -42,7 +42,7 @@ void remove_escape( string& );
 
 void casa( int );
 void OPE();
-void A();
+void ATR();
 void PRT();
 void E();
 void E_linha();
@@ -119,10 +119,14 @@ void OPE() {
       PRT();
       casa( ';' );
       break;
+    default:
+      ATR();
+      casa( ';' );
+      break; 
   }
 }
 
-void A() {
+void ATR() {
 // Guardamos o lexema pois a função 'casa' altera o seu valor.
   string temp = lexema; 
   casa( ID );
@@ -210,6 +214,12 @@ void G() {
       casa( ID ); 
       print( temp + "@" ); } 
       break;
+    case CSTR : {
+      string temp = lexema;
+      casa( CSTR ); 
+      print( temp );
+      break;
+    }
     case CDOUBLE : {
       string temp = lexema;
       casa( CDOUBLE ); 
