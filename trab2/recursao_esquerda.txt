@@ -64,5 +64,9 @@ F -> { Print ("0"); } - F { Print( "-"); }
    | + G { Print( "+"); }  
    | G
 G -> id { Print(lexema + "@"); }
+   | id ( PARAMS ) { Print( lexema + " #"); }
    | num { Print( lexema ); }
    | ( E )
+PARAMS -> E PARAMS'
+PARAMS' -> , E PARAMS'
+   | ε

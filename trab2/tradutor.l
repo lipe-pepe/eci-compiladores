@@ -50,6 +50,8 @@ void T();
 void T_linha();
 void F();
 void G();
+void PARAMS();
+void PARAMS_linha();
 
 %}
 
@@ -211,8 +213,18 @@ void G() {
     case ID : {
       string temp = lexema;
       casa( ID ); 
-      print( temp + " @" ); } 
+      if (token == '(') {
+        // Se for um id de uma função, chama PARAMS.
+        casa( '(');
+        PARAMS();
+        casa( ')' );
+        print( temp + " #");
+      } else {
+        // Se for uma variável, imprime o seu nome.
+        print( temp + " @" ); 
+      } 
       break;
+    }
     case CSTR : {
       string temp = lexema;
       casa( CSTR ); 
@@ -228,6 +240,21 @@ void G() {
       casa( '(' ); E(); casa( ')' ); break;
     default:
       erro( "Operando esperado, encontrado " + lexema );
+  }
+}
+
+void PARAMS() {
+  E();
+  PARAMS_linha();
+}
+
+void PARAMS_linha() {
+  switch( token ) {
+    case ',':
+      casa( ',' );
+      E();
+      PARAMS_linha();
+      break;
   }
 }
 
