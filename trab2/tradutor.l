@@ -49,6 +49,8 @@ void E_linha();
 void T();
 void T_linha();
 void F();
+// void H();
+// void H_linha();
 void G();
 void PARAMS();
 void PARAMS_linha();
@@ -188,6 +190,17 @@ void T_linha() {
       print( "/"); 
       T_linha(); 
       break;
+    case '^' : 
+      casa( '^' ); 
+      F(); 
+      print( "power #"); 
+      T_linha(); 
+      break;
+    case '!':
+      casa( '!' );
+      print( "fat #");
+      T_linha();
+      break;
   }
 }
 
@@ -204,9 +217,25 @@ void F() {
       F();
       break;
     default:
+      // H();
       G();
   }
 }
+
+// void H() {
+//   G();
+//   H_linha();
+// }
+
+// void H_linha() {
+//   switch( token ) {
+//     case '!' : 
+//       casa( '!' ); 
+//       H_linha(); 
+//       print( "fat #"); 
+//       break;
+//   }
+// }
 
 void G() {
   switch( token ) {
