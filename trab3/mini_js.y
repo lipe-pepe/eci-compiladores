@@ -300,8 +300,7 @@ vector<string> declara_var( TipoDecl tipo, string nome, int linha, int coluna ) 
     return vector<string>{};
   } 
   else {
-    cerr << "Variavel '" << nome << "' já declarada na linha: " << ts[nome].linha 
-         << ", coluna: " << ts[nome].coluna << endl;
+    cerr << "Erro: a variável '" << nome << "' ja foi declarada na linha " << ts[nome].linha << "." << endl;
     exit( 1 );     
   }
 }
@@ -314,7 +313,7 @@ void checa_simbolo( string nome, bool modificavel ) {
     }
   }
   else {
-    cerr << "Variavel '" << nome << "' não declarada." << endl;
+    cerr << "Erro: a variável '" << nome << "' não foi declarada." << endl;
     exit( 1 );     
   }
 }
