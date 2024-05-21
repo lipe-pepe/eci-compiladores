@@ -8,6 +8,8 @@ INT	    {DIGITO}+
 DOUBLE  {DIGITO}+"."{DIGITO}+([Ee][+\-]?{DIGITO}+)?
 ID      {LETRA}({LETRA}|{DIGITO})*
 STRING   \"([^\"\n\\]|(\\\")|\"\"|"\\\\")+\"
+STRING2   \'([^\'\n\\]|(\\\')|\'\'|\'\\\\\')+\'
+
 
 %%
 
@@ -38,6 +40,7 @@ STRING   \"([^\"\n\\]|(\\\")|\"\"|"\\\\")+\"
 
 {ID}       { return token( _ID ); }
 {STRING}      { return token( _CSTRING ); } 
+{STRING2}      { return token( _CSTRING ); }
 
 .          { return token( *yytext ); }
 

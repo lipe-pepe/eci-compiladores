@@ -247,6 +247,10 @@ EXPR : LVALUE '=' '{' '}'
     { checa_simbolo( $1.c[0], true ); $$.c = $1.c + $3.c + "="; }
   | LVALUE _MAIS_MAIS
     { checa_simbolo( $1.c[0], true ); $$.c = $1.c + "@" + $1.c + $1.c + "@" + "1" + "+" + "=" + "^"; }
+  | LVALUE _IGUAL EXPR
+    { checa_simbolo( $1.c[0], true ); $$.c = $1.c + $3.c + "=" + "="; }
+  | LVALUE _MAIS_IGUAL EXPR
+    { checa_simbolo( $1.c[0], true ); $$.c = $1.c + "@" + $1.c + $1.c + "@" + $3.c + "+" + "=" + "^";}
   | LVALUEPROP '=' EXPR 	
   | EXPR '<' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
