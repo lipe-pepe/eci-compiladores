@@ -2,11 +2,12 @@
 int token( int tk );
 %}
 
-D  	    [0-9]
-L   	[A-Za-z_]
-INT	    {D}+
-DOUBLE  {D}+"."{D}+([Ee][+\-]?{D}+)?
-ID      {L}({L}|{D})*
+DIGITO  	    [0-9]
+LETRA   	[A-Za-z_]
+INT	    {DIGITO}+
+DOUBLE  {DIGITO}+"."{DIGITO}+([Ee][+\-]?{DIGITO}+)?
+ID      {LETRA}({LETRA}|{DIGITO})*
+STRING   \"([^\"\n\\]|(\\\")|\"\"|"\\\\")+\"
 
 %%
 
@@ -36,6 +37,7 @@ ID      {L}({L}|{D})*
 "for"      { return token( FOR ); }
 
 {ID}       { return token( ID ); }
+{STRING}      { return token( CSTRING ); } 
 
 .          { return token( *yytext ); }
 

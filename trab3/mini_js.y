@@ -86,6 +86,8 @@ void print( vector<string> codigo ) {
 }
 %}
 
+  // Definição dos tokens
+
 %token ID IF ELSE LET CONST VAR PRINT FOR
 %token CDOUBLE CSTRING CINT
 %token AND OR ME_IG MA_IG DIF IGUAL
@@ -158,6 +160,16 @@ LET_VAR : ID
           { 
             $$.c = declara_var( Let, $1.c[0], $1.linha, $1.coluna ) + 
                    $1.c + $3.c + "=" + "^"; }
+        | ID '=' '{' '}'
+          {
+            $$.c = declara_var( Let, $1.c[0], $1.linha, $1.coluna ) + 
+                   $1.c + "{}" + "=" + "^";
+          }
+        | ID '=' '[' ']'
+          {
+            $$.c = declara_var( Let, $1.c[0], $1.linha, $1.coluna ) + 
+                   $1.c + "[]" + "=" + "^";
+          }
         ;
   
 CMD_VAR : VAR VAR_VARs { $$.c = $2.c; }
@@ -204,8 +216,16 @@ CMD_IF : IF '(' E ')' CMD ELSE CMD
 LVALUE : ID 
        ;
        
-LVALUEPROP : E '[' E ']'
+LVALUEPROP : E '[' E ']' { $$.c = $1.c + $3.c; }
            | E '.' ID  
+           ;
+
+LISTA : '[' LISTA_ELEM ']' { $$.c = $2.c; }
+      ;
+
+LISTA_ELEM : E ',' LISTA_ELEM { $$.c = $1.c + $3.c; }
+           | E
+           | { $$.clear(); }
            ;
 
 E : LVALUE '=' '{' '}'
@@ -237,6 +257,8 @@ E : LVALUE '=' '{' '}'
    
   | '(' '{' '}' ')'
     { $$.c = vector<string>{"{}"}; }
+  | LISTA
+  | CSTRING
   ;
   
   
@@ -245,8 +267,9 @@ E : LVALUE '=' '{' '}'
 #include "lex.yy.c"
 
 vector<string> declara_var( TipoDecl tipo, string nome, int linha, int coluna ) {
-  cerr << "insere_simbolo( " << tipo << ", " << nome 
-       << ", " << linha << ", " << coluna << ")" << endl;
+  // Debug:
+  // cerr << "insere_simbolo( " << tipo << ", " << nome 
+  //      << ", " << linha << ", " << coluna << ")" << endl;
        
   if( ts.count( nome ) == 0 ) {
     ts[nome] = Simbolo{ tipo, linha, coluna };
