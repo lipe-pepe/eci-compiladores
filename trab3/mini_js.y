@@ -88,10 +88,10 @@ void print( vector<string> codigo ) {
 
   // Definição dos tokens
 
-%token ID IF ELSE LET CONST VAR PRINT FOR
-%token CDOUBLE CSTRING CINT
-%token AND OR ME_IG MA_IG DIF IGUAL
-%token MAIS_IGUAL MAIS_MAIS
+%token _ID _IF _ELSE _LET _CONST _VAR _PRINT _FOR
+%token _CDOUBLE _CSTRING _CINT
+%token _AND _OR _ME_IG _MA_IG _DIF _IGUAL
+%token _MAIS_IGUAL _MAIS_MAIS
 
 %right '='
 %nonassoc '<' '>'
@@ -104,27 +104,27 @@ void print( vector<string> codigo ) {
 
 %%
 
-S : CMDs { print( resolve_enderecos( $1.c + "." ) ); }
+S : COMANDOS { print( resolve_enderecos( $1.c + "." ) ); }
   ;
 
-CMDs : CMDs CMD  { $$.c = $1.c + $2.c; };
+COMANDOS : COMANDOS COMANDO  { $$.c = $1.c + $2.c; };
      |           { $$.clear(); }
      ;
      
-CMD : CMD_LET ';'
-    | CMD_VAR ';'
-    | CMD_CONST ';'
-    | CMD_IF
-    | PRINT E ';' 
+COMANDO : COMANDO_LET ';'
+    | COMANDO_VAR ';'
+    | COMANDO_CONST ';'
+    | COMANDO_IF
+    | _PRINT EXPR ';' 
       { $$.c = $2.c + "println" + "#"; }
-    | CMD_FOR
-    | E ';'
+    | COMANDO_FOR
+    | EXPR ';'
       { $$.c = $1.c + "^"; };
-    | '{' CMDs '}'  
+    | '{' COMANDOS '}'  
       { $$.c = $2.c; }
     ;
  
-CMD_FOR : FOR '(' PRIM_E ';' E ';' E ')' CMD 
+COMANDO_FOR : _FOR '(' EXP_PRIMARIAS ';' EXPR ';' EXPR ')' COMANDO 
         { string lbl_fim_for = gera_label( "fim_for" );
           string lbl_condicao_for = gera_label( "condicao_for" );
           string lbl_comando_for = gera_label( "comando_for" );
@@ -140,65 +140,65 @@ CMD_FOR : FOR '(' PRIM_E ';' E ';' E ')' CMD
         }
         ;
 
-PRIM_E : CMD_LET 
-       | CMD_VAR
-       | CMD_CONST
-       | E  
+EXP_PRIMARIAS : COMANDO_LET 
+       | COMANDO_VAR
+       | COMANDO_CONST
+       | EXPR  
          { $$.c = $1.c + "^"; }
        ;
 
-CMD_LET : LET LET_VARs { $$.c = $2.c; }
+COMANDO_LET : _LET VARIAVEIS_LET { $$.c = $2.c; }
         ;
 
-LET_VARs : LET_VAR ',' LET_VARs { $$.c = $1.c + $3.c; } 
-         | LET_VAR
+VARIAVEIS_LET : VARIAVEL_LET ',' VARIAVEIS_LET { $$.c = $1.c + $3.c; } 
+         | VARIAVEL_LET
          ;
 
-LET_VAR : ID  
+VARIAVEL_LET : _ID  
           { $$.c = declara_var( Let, $1.c[0], $1.linha, $1.coluna ); }
-        | ID '=' E
+        | _ID '=' EXPR
           { 
             $$.c = declara_var( Let, $1.c[0], $1.linha, $1.coluna ) + 
                    $1.c + $3.c + "=" + "^"; }
-        | ID '=' '{' '}'
+        | _ID '=' '{' '}'
           {
             $$.c = declara_var( Let, $1.c[0], $1.linha, $1.coluna ) + 
                    $1.c + "{}" + "=" + "^";
           }
-        | ID '=' '[' ']'
+        | _ID '=' '[' ']'
           {
             $$.c = declara_var( Let, $1.c[0], $1.linha, $1.coluna ) + 
                    $1.c + "[]" + "=" + "^";
           }
         ;
   
-CMD_VAR : VAR VAR_VARs { $$.c = $2.c; }
+COMANDO_VAR : _VAR VAR_VARs { $$.c = $2.c; }
         ;
         
 VAR_VARs : VAR_VAR ',' VAR_VARs { $$.c = $1.c + $3.c; } 
          | VAR_VAR
          ;
 
-VAR_VAR : ID  
+VAR_VAR : _ID  
           { $$.c = declara_var( Var, $1.c[0], $1.linha, $1.coluna ); }
-        | ID '=' E
+        | _ID '=' EXPR
           {  $$.c = declara_var( Var, $1.c[0], $1.linha, $1.coluna ) + 
                     $1.c + $3.c + "=" + "^"; }
         ;
   
-CMD_CONST: CONST CONST_VARs { $$.c = $2.c; }
+COMANDO_CONST: _CONST CONST_VARs { $$.c = $2.c; }
          ;
   
 CONST_VARs : CONST_VAR ',' CONST_VARs { $$.c = $1.c + $3.c; } 
            | CONST_VAR
            ;
 
-CONST_VAR : ID '=' E
+CONST_VAR : _ID '=' EXPR
             { $$.c = declara_var( Const, $1.c[0], $1.linha, $1.coluna ) + 
                      $1.c + $3.c + "=" + "^"; }
           ;
   
-CMD_IF : IF '(' E ')' CMD ELSE CMD
+COMANDO_IF : _IF '(' EXPR ')' COMANDO _ELSE COMANDO
          { string lbl_true = gera_label( "lbl_true" );
            string lbl_fim_if = gera_label( "lbl_fim_if" );
            string definicao_lbl_true = ":" + lbl_true;
@@ -211,54 +211,70 @@ CMD_IF : IF '(' E ')' CMD ELSE CMD
                    definicao_lbl_fim_if         // Fim do IF
                    ;
          }
+         | _IF '(' EXPR ')' COMANDO
+         { string lbl_true = gera_label( "lbl_true" );
+           string lbl_fim_if = gera_label( "lbl_fim_if" );
+           string definicao_lbl_true = ":" + lbl_true;
+           string definicao_lbl_fim_if = ":" + lbl_fim_if;
+                    
+            $$.c = $3.c +                       // Codigo da expressão
+                   lbl_true + "?" +             // Código do IF
+                   lbl_fim_if + "#" +           // Código do False
+                   definicao_lbl_true + $5.c +  // Código do True
+                   definicao_lbl_fim_if         // Fim do IF
+                   ;
+         }
        ;
         
-LVALUE : ID 
+LVALUE : _ID 
        ;
        
-LVALUEPROP : E '[' E ']' { $$.c = $1.c + $3.c; }
-           | E '.' ID  
+LVALUEPROP : EXPR '[' EXPR ']' { $$.c = $1.c + $3.c; }
+           | EXPR '.' _ID  
            ;
 
 LISTA : '[' LISTA_ELEM ']' { $$.c = $2.c; }
       ;
 
-LISTA_ELEM : E ',' LISTA_ELEM { $$.c = $1.c + $3.c; }
-           | E
+LISTA_ELEM : EXPR ',' LISTA_ELEM { $$.c = $1.c + $3.c; }
+           | EXPR
            | { $$.clear(); }
            ;
 
-E : LVALUE '=' '{' '}'
+EXPR : LVALUE '=' '{' '}'
     { checa_simbolo( $1.c[0], true ); $$.c = $1.c + "{}" + "="; }
-  | LVALUE '=' E 
+  | LVALUE '=' EXPR 
     { checa_simbolo( $1.c[0], true ); $$.c = $1.c + $3.c + "="; }
-  | LVALUEPROP '=' E 	
-  | E '<' E
+  | LVALUE _MAIS_MAIS
+    { checa_simbolo( $1.c[0], true ); $$.c = $1.c + "@" + $1.c + $1.c + "@" + "1" + "+" + "=" + "^"; }
+  | LVALUEPROP '=' EXPR 	
+  | EXPR '<' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
-  | E '>' E
+  | EXPR '>' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
-  | E '+' E
+  | EXPR '+' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
-  | E '-' E
+  | EXPR '-' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
-  | E '*' E
+  | EXPR '*' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
-  | E '/' E
+  | EXPR '/' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
-  | E '%' E
+  | EXPR '%' EXPR
     { $$.c = $1.c + $3.c + $2.c; }
-  | CDOUBLE
-  | CINT
+  | _CDOUBLE
+  | _CINT
   | LVALUE 
     { checa_simbolo( $1.c[0], false ); $$.c = $1.c + "@"; } 
   | LVALUEPROP  
-  | '(' E ')'
+  | '(' EXPR ')'
     { $$.c = $2.c; }
+  
    
   | '(' '{' '}' ')'
     { $$.c = vector<string>{"{}"}; }
   | LISTA
-  | CSTRING
+  | _CSTRING
   ;
   
   

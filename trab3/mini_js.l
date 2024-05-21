@@ -15,29 +15,29 @@ STRING   \"([^\"\n\\]|(\\\")|\"\"|"\\\\")+\"
 " "        { coluna++; }
 "\n"	   { linha++; coluna = 0; }
 
-{DOUBLE}   { return token( CDOUBLE ); }
-{INT}	   { return token( CINT ); } 
+{DOUBLE}   { return token( _CDOUBLE ); }
+{INT}	   { return token( _CINT ); } 
 
-"&&"	   { return token( AND ); }
-"||"	   { return token( OR ); }
-"<="	   { return token( ME_IG ); }
-">="	   { return token( MA_IG ); }
-"!="	   { return token( DIF ); }
-"=="	   { return token( IGUAL ); }
+"&&"	   { return token( _AND ); }
+"||"	   { return token( _OR ); }
+"<="	   { return token( _ME_IG ); }
+">="	   { return token( _MA_IG ); }
+"!="	   { return token( _DIF ); }
+"=="	   { return token( _IGUAL ); }
 
-"+="       { return token( MAIS_IGUAL ); }
-"++"       { return token( MAIS_MAIS ); }
+"+="       { return token( _MAIS_IGUAL ); }
+"++"       { return token( _MAIS_MAIS ); }
 
-"let"      { return token( LET ); }
-"const"    { return token( CONST ); }
-"var"      { return token( VAR ); }
-"if"       { return token( IF ); }
-"else"     { return token( ELSE ); }
-"print"    { return token( PRINT ); }
-"for"      { return token( FOR ); }
+"let"      { return token( _LET ); }
+"const"    { return token( _CONST ); }
+"var"      { return token( _VAR ); }
+"if"       { return token( _IF ); }
+"else"     { return token( _ELSE ); }
+"print"    { return token( _PRINT ); }
+"for"      { return token( _FOR ); }
 
-{ID}       { return token( ID ); }
-{STRING}      { return token( CSTRING ); } 
+{ID}       { return token( _ID ); }
+{STRING}      { return token( _CSTRING ); } 
 
 .          { return token( *yytext ); }
 
