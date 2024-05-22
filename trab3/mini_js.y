@@ -88,7 +88,7 @@ void print( vector<string> codigo ) {
 
   // Definição dos tokens
 
-%token _ID _IF _ELSE _LET _CONST _VAR _PRINT _FOR
+%token _ID _IF _ELSE _LET _CONST _VAR _PRINT _FOR _WHILE
 %token _CDOUBLE _CSTRING _CINT
 %token _AND _OR _ME_IG _MA_IG _DIF _IGUAL
 %token _MAIS_IGUAL _MAIS_MAIS
@@ -117,6 +117,7 @@ COMANDO : COMANDO_LET ';'
     | COMANDO_IF
     | _PRINT EXPR ';'         { $$.c = $2.c + "println" + "#"; }
     | COMANDO_FOR
+    | COMANDO_WHILE ';'
     | EXPR ';'                { $$.c = $1.c + "^"; };
     | '{' COMANDOS '}'        { $$.c = $2.c; }
     ;
@@ -136,6 +137,21 @@ COMANDO_FOR : _FOR '(' EXP_PRIMARIAS ';' EXPR ';' EXPR ')' COMANDO
                  definicao_lbl_fim_for;
         }
         ;
+
+COMANDO_WHILE : _WHILE '(' EXPR ')' COMANDO  
+        { string lbl_fim_while = gera_label( "fim_while" );
+          string lbl_condicao_while = gera_label( "condicao_while" );
+          string lbl_comando_while = gera_label( "comando_while" );
+          string definicao_lbl_fim_while = ":" + lbl_fim_while;
+          string definicao_lbl_condicao_while = ":" + lbl_condicao_while;
+          string definicao_lbl_comando_while = ":" + lbl_comando_while;
+          
+          $$.c = definicao_lbl_condicao_while +
+                 $3.c + lbl_comando_while + "?" + lbl_fim_while + "#" +
+                 definicao_lbl_comando_while + $5.c + 
+                 lbl_condicao_while + "#" +
+                 definicao_lbl_fim_while;
+        }
 
 EXP_PRIMARIAS : COMANDO_LET 
        | COMANDO_VAR

@@ -37,6 +37,7 @@ STRING2   \'([^\'\n\\]|(\\\')|\'\'|\'\\\\\')+\'
 "else"     { return token( _ELSE ); }
 "print"    { return token( _PRINT ); }
 "for"      { return token( _FOR ); }
+"while"    { return token( _WHILE ); }
 
 {ID}       { return token( _ID ); }
 {STRING}      { return token( _CSTRING ); } 
