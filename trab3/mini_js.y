@@ -116,7 +116,7 @@ COMANDO : COMANDO_LET ';'
     | COMANDO_CONST ';'
     | COMANDO_IF
     | _PRINT EXPR ';'         { $$.c = $2.c + "println" + "#"; }
-    | COMANDO_FOR
+    | COMANDO_FOR ';'
     | COMANDO_WHILE ';'
     | EXPR ';'                { $$.c = $1.c + "^"; };
     | '{' COMANDOS '}'        { $$.c = $2.c; }
