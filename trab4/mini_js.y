@@ -427,9 +427,7 @@ vector<string> declara_var( TipoDecl tipo, string nome, int linha, int coluna ) 
     return vector<string>{};
   } 
   else {
-    cerr << "Redeclaração de '" << nomeTipoDecl[topo[nome].tipo] << " " << nome 
-         << "' na linha: " << topo[nome].linha 
-         << ", coluna: " << topo[nome].coluna << endl;
+    cerr << "Erro: a variável '" << nome << "' já foi declarada na linha " << topo[nome].linha << "." << endl;
     exit( 1 );     
   }
 }
