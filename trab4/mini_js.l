@@ -40,7 +40,6 @@ STRING2   \'([^\'\n\\]|(\\\')|\'\'|\'\\\\\')+\'
 "var"      { return token( _VAR ); }
 "if"       { return token( _IF ); }
 "else"     { return token( _ELSE ); }
-"print"    { return token( _PRINT ); }
 "for"      { return token( _FOR ); }
 "while"    { return token( _WHILE ); }
 "function" { return token( _FUNCAO ); }

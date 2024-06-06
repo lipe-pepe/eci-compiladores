@@ -317,12 +317,10 @@ VARIAVEIS_VAR : VARIAVEL_VAR ',' VARIAVEIS_VAR { $$.c = $1.c + $3.c; }
          | VARIAVEL_VAR
          ;
 
-VARIAVEL_VAR : _ID  
-          { $$.c = declara_var( Var, $1.c[0], $1.linha, $1.coluna ); }
-        | _ID '=' EXPR
-          {  $$.c = declara_var( Var, $1.c[0], $1.linha, $1.coluna ) + 
-                    $1.c + $3.c + "=" + "^"; }
+VARIAVEL_VAR : _ID        { $$.c = declara_var( Var, $1.c[0], $1.linha, $1.coluna ); }
+        | _ID '=' EXPR    {  $$.c = declara_var( Var, $1.c[0], $1.linha, $1.coluna ) + $1.c + $3.c + "=" + "^"; }
         ;
+        // AQUI
   
 COMANDO_CONST: _CONST VARIAVEIS_CONST { $$.c = $2.c; }
          ;
@@ -376,7 +374,7 @@ LISTA : '[' LISTA_ELEM ']'          { $$.c = $2.c; }
 
 LISTA_ELEM : EXPR ',' LISTA_ELEM    { $$.c = $1.c + $3.c; }
            | EXPR
-           | { $$.clear(); }
+           | { $$.c = vector<string>{"[]"}; }
           ;
 
 EXPR : LVALUE '=' '{' '}'           { checa_simbolo( $1.c[0], true ); $$.c = $1.c + "{}" + "="; }
