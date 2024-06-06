@@ -44,6 +44,7 @@ STRING2   \'([^\'\n\\]|(\\\')|\'\'|\'\\\\\')+\'
 "for"      { return token( _FOR ); }
 "while"    { return token( _WHILE ); }
 "function" { return token( _FUNCAO ); }
+"return"   { return token( _RETURN ); }
 
 {ID}       { return token( _ID ); }
 {STRING}      { return token( _CSTRING ); } 

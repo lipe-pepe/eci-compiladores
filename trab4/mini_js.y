@@ -128,7 +128,7 @@ void print( vector<string> codigo ) {
 
   // Definição dos tokens
 
-%token _ID _IF _ELSE _LET _CONST _VAR _PRINT _FOR _WHILE _FUNCAO _ASM
+%token _ID _IF _ELSE _LET _CONST _VAR _PRINT _FOR _WHILE _FUNCAO _ASM _RETURN
 %token _CDOUBLE _CSTRING _CINT
 %token _AND _OR _ME_IG _MA_IG _DIF _IGUAL
 %token _MAIS_IGUAL _MAIS_MAIS
@@ -156,7 +156,8 @@ COMANDO : COMANDO_LET ';'
     | COMANDO_CONST ';'
     | COMANDO_IF
     | COMANDO_FUNCAO
-    | EXPR _ASM ';' 	{ $$.c = $1.c + $2.c + "^"; }
+    | EXPR _ASM ';' 	        { $$.c = $1.c + $2.c + "^"; }
+    | _RETURN EXPR ';' 	      { $$.c = $2.c + "'&retorno'" + "@" + "~"; }
     | _PRINT EXPR ';'         { $$.c = $2.c + "println" + "#"; }
     | COMANDO_FOR ';'
     | COMANDO_WHILE ';'
@@ -164,6 +165,7 @@ COMANDO : COMANDO_LET ';'
     | '{' EMPILHA_TS COMANDOS '}'
       { ts.pop_back();
         $$.c = "<{" + $3.c + "}>"; }
+    | ';' {$$.clear();}
     ;
     ;
  
@@ -275,6 +277,7 @@ PARAMETRO : _ID
 ARGUMENTOS : EXPR
        { $$.c = $1.c;
          $$.contador = 1; }
+      | { $$.clear(); }
      ;
 
 EXP_PRIMARIAS : COMANDO_LET 
