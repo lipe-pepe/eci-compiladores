@@ -377,6 +377,14 @@ LISTA_ELEM : EXPR ',' LISTA_ELEM    { $$.c = $1.c + $3.c; }
            | { $$.c = vector<string>{"[]"}; }
           ;
 
+OBJETO : '{' OBJETO_ELEM '}'        { $$.c = $2.c; }
+       ;
+
+OBJETO_ELEM : _ID ':' EXPR ',' OBJETO_ELEM { $$.c = $1.c + $3.c + $5.c; }
+           | _ID ':' EXPR                 { $$.c = $1.c + $3.c; }
+           | { $$.c = vector<string>{"{}"}; }
+           ;
+
 EXPR : LVALUE '=' '{' '}'           { checa_simbolo( $1.c[0], true ); $$.c = $1.c + "{}" + "="; }
     | LVALUE '=' EXPR               { checa_simbolo( $1.c[0], true ); $$.c = $1.c + $3.c + "="; }
     | LVALUE _MAIS_MAIS             { checa_simbolo( $1.c[0], true ); $$.c = $1.c + "@" + $1.c + $1.c + "@" + "1" + "+" + "=" + "^"; }
@@ -404,6 +412,7 @@ EXPR : LVALUE '=' '{' '}'           { checa_simbolo( $1.c[0], true ); $$.c = $1.
     | '(' EXPR ')'                  { $$.c = $2.c; }
     | '(' '{' '}' ')'               { $$.c = vector<string>{"{}"}; }
     | LISTA
+    | OBJETO
     | _CSTRING
     | _BOOLEANA
   ;
