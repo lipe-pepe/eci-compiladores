@@ -129,7 +129,7 @@ void print( vector<string> codigo ) {
   // Definição dos tokens
 
 %token _ID _IF _ELSE _LET _CONST _VAR _PRINT _FOR _WHILE _FUNCAO _ASM _RETURN
-%token _CDOUBLE _CSTRING _CINT
+%token _CDOUBLE _CSTRING _CINT _BOOLEANA
 %token _AND _OR _ME_IG _MA_IG _DIF _IGUAL
 %token _MAIS_IGUAL _MAIS_MAIS
 
@@ -405,6 +405,7 @@ EXPR : LVALUE '=' '{' '}'           { checa_simbolo( $1.c[0], true ); $$.c = $1.
     | '(' '{' '}' ')'               { $$.c = vector<string>{"{}"}; }
     | LISTA
     | _CSTRING
+    | _BOOLEANA
   ;
   
   

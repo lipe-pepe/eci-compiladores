@@ -45,6 +45,8 @@ STRING2   \'([^\'\n\\]|(\\\')|\'\'|\'\\\\\')+\'
 "function" { return token( _FUNCAO ); }
 "return"   { return token( _RETURN ); }
 
+"true"|"false" { return token( _BOOLEANA ); }
+
 {ID}       { return token( _ID ); }
 {STRING}      { return token( _CSTRING ); } 
 {STRING2}      { return token( _CSTRING ); }
