@@ -165,7 +165,7 @@ COMANDO : COMANDO_LET ';'
     | '{' EMPILHA_TS COMANDOS '}'
       { ts.pop_back();
         $$.c = "<{" + $3.c + "}>"; }
-    | ';' {$$.clear();}
+    | ';'                    { $$.clear(); }
     ;
     ;
  
@@ -238,7 +238,7 @@ PARAMETROS : PARAMETROS ',' PARAMETRO
                  definicao_lbl_true + 
                  definicao_lbl_fim_if;
          }
-         $$.contador = $1.contador + $3.contador; 
+         $$.contador++; 
        }
      | PARAMETRO 
        { // a & a arguments @ 0 [@] = ^ 
@@ -274,9 +274,8 @@ PARAMETRO : _ID
       }
     ;
              
-ARGUMENTOS : EXPR
-       { $$.c = $1.c;
-         $$.contador = 1; }
+ARGUMENTOS : EXPR               { $$.c = $1.c; $$.contador = 1; }
+      | ARGUMENTOS ',' EXPR     { $$.c = $1.c + $3.c; $$.contador = $1.contador + 1; }
       | { $$.clear(); }
      ;
 
@@ -447,10 +446,7 @@ void checa_simbolo( string nome, bool modificavel ) {
       else 
         return;
     }
-  }
-
-  cerr << "Variavel '" << nome << "' não declarada." << endl;
-  exit( 1 );     
+  } 
 }
 
 void yyerror( const char* st ) {
