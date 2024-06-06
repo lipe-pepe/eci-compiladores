@@ -56,7 +56,7 @@ extern "C" int yylex();
 int yyparse();
 void yyerror(const char *);
 
-string remove_asm(string str) {
+string trim(string str)   {
     size_t pos_inicial = str.find('{');
     size_t pos_final = str.find('}', pos_inicial);
     return str.substr(pos_inicial + 1, pos_final - pos_inicial - 1);
@@ -156,11 +156,15 @@ COMANDO : COMANDO_LET ';'
     | COMANDO_CONST ';'
     | COMANDO_IF
     | COMANDO_FUNCAO
+    | EXPR _ASM ';' 	{ $$.c = $1.c + $2.c + "^"; }
     | _PRINT EXPR ';'         { $$.c = $2.c + "println" + "#"; }
     | COMANDO_FOR ';'
     | COMANDO_WHILE ';'
     | EXPR ';'                { $$.c = $1.c + "^"; };
-    | '{' COMANDOS '}'        { $$.c = $2.c; }
+    | '{' EMPILHA_TS COMANDOS '}'
+      { ts.pop_back();
+        $$.c = "<{" + $3.c + "}>"; }
+    ;
     ;
  
 COMANDO_FOR : _FOR '(' EXP_PRIMARIAS ';' EXPR ';' EXPR ')' COMANDO 
@@ -212,7 +216,7 @@ COMANDO_FUNCAO : _FUNCAO _ID { declara_var( Var, $2.c[0], $2.linha, $2.coluna );
          ;
 
 LISTA_PARAMETROS : PARAMETROS
-           | { $$.clear(); }
+           | { $$.clear();}
            ;
            
 PARAMETROS : PARAMETROS ',' PARAMETRO  
@@ -221,7 +225,16 @@ PARAMETROS : PARAMETROS ',' PARAMETRO
                 + "[@]" + "=" + "^"; 
                 
          if( $3.valor_default.size() > 0 ) {
-           // Gerar código para testar valor default.
+           string lbl_true = gera_label( "lbl_true" );
+           string lbl_fim_if = gera_label( "lbl_fim_if" );
+           string definicao_lbl_true = ":" + lbl_true;
+           string definicao_lbl_fim_if = ":" + lbl_fim_if;
+          
+           $$.c = $$.c + $3.c + "@" +  "undefined" + "@" + "!=" +
+                 lbl_true + "?" + $3.c + $3.valor_default + "=" + "^" +
+                 lbl_fim_if + "#" +
+                 definicao_lbl_true + 
+                 definicao_lbl_fim_if;
          }
          $$.contador = $1.contador + $3.contador; 
        }
@@ -230,7 +243,15 @@ PARAMETROS : PARAMETROS ',' PARAMETRO
          $$.c = $1.c + "&" + $1.c + "arguments" + "@" + "0" + "[@]" + "=" + "^"; 
                 
          if( $1.valor_default.size() > 0 ) {
-           // Gerar código para testar valor default.
+           string lbl_true = gera_label( "lbl_true" );
+           string lbl_fim_if = gera_label( "lbl_fim_if" );
+           string definicao_lbl_true = ":" + lbl_true;
+           string definicao_lbl_fim_if = ":" + lbl_fim_if;
+           $$.c = $$.c + $1.c + "@" +  "undefined" + "@" + "!=" +
+                 lbl_true + "?" + $1.c + $1.valor_default + "=" + "^" +
+                 lbl_fim_if + "#" +
+                 definicao_lbl_true + 
+                 definicao_lbl_fim_if;
          }
          $$.contador = $1.contador; 
        }
@@ -250,6 +271,11 @@ PARAMETRO : _ID
         declara_var( Let, $1.c[0], $1.linha, $1.coluna ); 
       }
     ;
+             
+ARGUMENTOS : EXPR
+       { $$.c = $1.c;
+         $$.contador = 1; }
+     ;
 
 EXP_PRIMARIAS : COMANDO_LET 
        | COMANDO_VAR
@@ -361,6 +387,7 @@ EXPR : LVALUE '=' '{' '}'           { checa_simbolo( $1.c[0], true ); $$.c = $1.
     | LVALUEPROP '=' EXPR   	      { checa_simbolo( $1.c[0], true ); $$.c = $1.c + $3.c + "[=]"; }
     | LVALUEPROP _MAIS_IGUAL EXPR   { checa_simbolo( $1.c[0], true ); $$.c = $1.c + $1.c +  "[@]" + $3.c +  "+" + "[=]";}
 
+    | EXPR '(' ARGUMENTOS ')' { $$.c = $3.c + to_string( $3.contador ) + $1.c + "$"; }
     | EXPR '<' EXPR                 { $$.c = $1.c + $3.c + $2.c; }
     | EXPR '>' EXPR                 { $$.c = $1.c + $3.c + $2.c; }
     | EXPR '+' EXPR                 { $$.c = $1.c + $3.c + $2.c; }

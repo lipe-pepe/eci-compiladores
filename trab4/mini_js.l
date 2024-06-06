@@ -30,11 +30,10 @@ STRING2   \'([^\'\n\\]|(\\\')|\'\'|\'\\\\\')+\'
 "+="       { return token( _MAIS_IGUAL ); }
 "++"       { return token( _MAIS_MAIS ); }
 
-"asm{".*"}"  {  string lexema = remove_asm(yytext); //trim( yytext + 3, "{}" ); 
+"asm{".*"}"  {  string lexema = trim(yytext);
                 yylval.c = tokeniza( lexema );
                 coluna += strlen( yytext ); 
-                return token(_ASM); 
-              }
+                return _ASM; }
 
 "let"      { return token( _LET ); }
 "const"    { return token( _CONST ); }
